@@ -4,11 +4,10 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
-using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-	internal class WindowsIsolatedStorage : IIsolatedStorageFile
+	internal class WindowsIsolatedStorage : Internals.IIsolatedStorageFile
 	{
 		 StorageFolder _folder;
 
