@@ -57,27 +57,27 @@ namespace Xamarin.Forms.Platform.UWP
 			return properties.DateModified;
 		}
 
-		public async Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access)
+		public async Task<Stream> OpenFileAsync(string path, System.IO.FileMode mode, System.IO.FileAccess access)
 		{
 			StorageFile file;
 
 			switch (mode)
 			{
-				case FileMode.CreateNew:
+				case System.IO.FileMode.CreateNew:
 					file = await _folder.CreateFileAsync(path, CreationCollisionOption.FailIfExists).AsTask().ConfigureAwait(false);
 					break;
 
-				case FileMode.Create:
-				case FileMode.Truncate: // TODO See if ReplaceExisting already truncates
+				case System.IO.FileMode.Create:
+				case System.IO.FileMode.Truncate: // TODO See if ReplaceExisting already truncates
 					file = await _folder.CreateFileAsync(path, CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
 					break;
 
-				case FileMode.OpenOrCreate:
-				case FileMode.Append:
+				case System.IO.FileMode.OpenOrCreate:
+				case System.IO.FileMode.Append:
 					file = await _folder.CreateFileAsync(path, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
 					break;
 
-				case FileMode.Open:
+				case System.IO.FileMode.Open:
 					file = await _folder.GetFileAsync(path);
 					break;
 
@@ -87,16 +87,16 @@ namespace Xamarin.Forms.Platform.UWP
 
 			switch (access)
 			{
-				case FileAccess.Read:
+				case System.IO.FileAccess.Read:
 					return await file.OpenStreamForReadAsync().ConfigureAwait(false);
-				case FileAccess.Write:
+				case System.IO.FileAccess.Write:
 					Stream stream = await file.OpenStreamForWriteAsync().ConfigureAwait(false);
-					if (mode == FileMode.Append)
+					if (mode == System.IO.FileMode.Append)
 						stream.Position = stream.Length;
 
 					return stream;
 
-				case FileAccess.ReadWrite:
+				case System.IO.FileAccess.ReadWrite:
 					IRandomAccessStream randStream = await file.OpenAsync(FileAccessMode.ReadWrite).AsTask().ConfigureAwait(false);
 					return randStream.AsStream();
 
@@ -105,7 +105,7 @@ namespace Xamarin.Forms.Platform.UWP
 			}
 		}
 
-		public Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access, FileShare share)
+		public Task<Stream> OpenFileAsync(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share)
 		{
 			return OpenFileAsync(path, mode, access);
 		}
