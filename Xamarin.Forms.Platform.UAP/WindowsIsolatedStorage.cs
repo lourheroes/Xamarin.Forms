@@ -4,12 +4,15 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
+using FileMode = Xamarin.Forms.Internals.FileMode;
+using FileAccess = Xamarin.Forms.Internals.FileAccess;
+using FileShare = Xamarin.Forms.Internals.FileShare;
 
 namespace Xamarin.Forms.Platform.UWP
 {
 	internal class WindowsIsolatedStorage : Internals.IIsolatedStorageFile
 	{
-		 StorageFolder _folder;
+		StorageFolder _folder;
 
 		public WindowsIsolatedStorage(StorageFolder folder)
 		{
@@ -57,27 +60,27 @@ namespace Xamarin.Forms.Platform.UWP
 			return properties.DateModified;
 		}
 
-		public async Task<Stream> OpenFileAsync(string path, System.IO.FileMode mode, System.IO.FileAccess access)
+		public async Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access)
 		{
 			StorageFile file;
 
 			switch (mode)
 			{
-				case System.IO.FileMode.CreateNew:
+				case FileMode.CreateNew:
 					file = await _folder.CreateFileAsync(path, CreationCollisionOption.FailIfExists).AsTask().ConfigureAwait(false);
 					break;
 
-				case System.IO.FileMode.Create:
-				case System.IO.FileMode.Truncate: // TODO See if ReplaceExisting already truncates
+				case FileMode.Create:
+				case FileMode.Truncate: // TODO See if ReplaceExisting already truncates
 					file = await _folder.CreateFileAsync(path, CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
 					break;
 
-				case System.IO.FileMode.OpenOrCreate:
-				case System.IO.FileMode.Append:
+				case FileMode.OpenOrCreate:
+				case FileMode.Append:
 					file = await _folder.CreateFileAsync(path, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
 					break;
 
-				case System.IO.FileMode.Open:
+				case FileMode.Open:
 					file = await _folder.GetFileAsync(path);
 					break;
 
@@ -87,25 +90,25 @@ namespace Xamarin.Forms.Platform.UWP
 
 			switch (access)
 			{
-				case System.IO.FileAccess.Read:
+				case FileAccess.Read:
 					return await file.OpenStreamForReadAsync().ConfigureAwait(false);
-				case System.IO.FileAccess.Write:
+				case FileAccess.Write:
 					Stream stream = await file.OpenStreamForWriteAsync().ConfigureAwait(false);
-					if (mode == System.IO.FileMode.Append)
+					if (mode == FileMode.Append)
 						stream.Position = stream.Length;
 
 					return stream;
 
-				case System.IO.FileAccess.ReadWrite:
+				case FileAccess.ReadWrite:
 					IRandomAccessStream randStream = await file.OpenAsync(FileAccessMode.ReadWrite).AsTask().ConfigureAwait(false);
 					return randStream.AsStream();
 
 				default:
 					throw new ArgumentException("access was an invalid FileAccess", "access");
-			}
+			}			
 		}
 
-		public Task<Stream> OpenFileAsync(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share)
+		public Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access, FileShare share)
 		{
 			return OpenFileAsync(path, mode, access);
 		}
