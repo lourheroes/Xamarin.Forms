@@ -129,15 +129,17 @@ namespace Xamarin.Forms.Controls
 			void VerifyNoDuplicates()
 			{
 				var duplicates = new HashSet<string> ();
-				_issues.ForEach (im =>
+
+				foreach (var im in _issues)
 				{
-					if (duplicates.Contains (im.Name) && !IsExempt (im.Name)) {
-						throw new NotSupportedException ("Please provide unique tracker + issue number combo: " 
-							+ im.IssueTracker.ToString () + im.IssueNumber.ToString () + im.IssueTestNumber.ToString());
+					if (duplicates.Contains(im.Name) && !IsExempt(im.Name))
+					{
+						throw new NotSupportedException("Please provide unique tracker + issue number combo: "
+							+ im.IssueTracker.ToString() + im.IssueNumber.ToString() + im.IssueTestNumber.ToString());
 					}
 
-					duplicates.Add (im.Name);
-				});
+					duplicates.Add(im.Name);
+				}
 			}
 
 			public TestCaseScreen()
